@@ -25,7 +25,15 @@ const schema = mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         required:true,
         ref:"User" //User modelini referans verdik (JOIN)
-    }
+    },
+
+    //Bu Soryua birden fazla like gelebileceginden kaynakli bunu array yaptik obje deigil
+    likes:[//Likes islemesi icin USER ile bagladik. 
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"User"
+        } 
+    ]
 });
 
 //We have to create a PRE hooks for the slugify process (our question should look like that in params (asked-question-mongodb))

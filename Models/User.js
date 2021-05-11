@@ -9,8 +9,14 @@ const jwt = require("jsonwebtoken");
 
 //Forgot my password reset
 const crypto = require("crypto");
-const { userInfo } = require("os");
-const { reset } = require("nodemon");
+
+//Question modelini dehil ediyoruz
+//NEDENI: DELETE ON CASCADE =>Bir kullanici silindiginde o kullaniciyla iliskili sorularinda silinmesi gerekir.
+//Bu yuzden post hook ekleylim user shcmeaya. 
+//---------------------------HOOKS---------------------------------------------------------------
+//(Routelarda silerken kullaniciyi .remove() kullandik.Bu yuzden schema.post("remove") kullanacayik)
+//(Routelarda savelerlen kullaniciyi .save() kullandik.Bu yuzden schema.pre("save") kullanacayik)
+const Question = require("./Question");
 
 
 //Creation of the USER MODEL (DEFINITION)
@@ -116,7 +122,7 @@ schema.methods.getResetPasswordTokenFromUser = function(){
 }
 
 
-//PRE HOOKS
+//PRE HOOKS (ssave  hoook)
 // WE HAVE TO HANDLE THE HASH OF PASSWORD BEFORE IT SAVED SO WE USE HOOKS (PRE HOOK here)
 schema.pre("save", async function (next) {
     //Kullaniciya update yaptigimiz zaman burasi yine calisacagindan eger password degismemisse ben bastan hashlenmesini istemiyorum
@@ -134,8 +140,18 @@ schema.pre("save", async function (next) {
     catch (err) {
         next(err);
     };
-})
+});
 
+
+//PRE HOOKS (ssave  hoook)
+//This is post (after) hook so we dont go there next thats why we dont pass next into parameter
+schema.post("remove",async function(){
+
+    //Delete all question on REMOVE that is releated with user id
+   await Question.deleteMany({
+        user:this._id
+    })
+})
 
 
 module.exports = mongoose.model("User", schema);
