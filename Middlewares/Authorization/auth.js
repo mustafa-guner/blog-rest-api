@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const {isTokenIncluded,getAccessTokenFromHeader} = require("../../Helpers/Authorization/tokenHelpers");
 const expressAsyncHandler = require("express-async-handler");
 const User = require("../../Models/User");
+const Question = require("../../Models/Question");
 
 module.exports = {
 
@@ -15,7 +16,7 @@ module.exports = {
             //403 => Forbidden Status => Sayfaya girilir ama yetkisi olmayan alana ulasmaya calisilirsa
             return next(new CustomError("You are not authorized to this route!",401))
         }
-        console.log(req.headers.authorization);
+        //console.log(req.headers.authorization);
         const AccessToken = getAccessTokenFromHeader(req);
 
         jwt.verify(AccessToken,JWT_SECRET_KEY,(err,decoded)=>{
@@ -34,7 +35,14 @@ module.exports = {
     getAdminAccess: expressAsyncHandler( async(req,res,next)=>{
         const id = req.user.id;
         const user = await User.findOne({_id:id});
-        console.log(user);
+        //console.log(user);
         return user.role !== "admin" ? next(new CustomError("Only Admins Can Access This Route!",403)):next();
+    }),
+
+    //This middleware detects the user if the owner of the question to update it. (Noone can update unless the owners)
+    getQuestionOwnerAccess: expressAsyncHandler( async(req,res,next)=>{
+        const userId = req.user.id;
+        const question = await Question.findById(req.params.id);
+        return question.user != userId ? next(new CustomError("You cant edit this question! Its not even yours!",403)):next();
     })
 }

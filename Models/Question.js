@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const schema = mongoose.Schema({
     title:{
@@ -26,5 +27,26 @@ const schema = mongoose.Schema({
         ref:"User" //User modelini referans verdik (JOIN)
     }
 });
+
+//We have to create a PRE hooks for the slugify process (our question should look like that in params (asked-question-mongodb))
+schema.pre("save",function(next){
+
+    //We have to check the question when its informations updated is title changed as well?
+    if(!this.isModified("title")){
+        next();
+    }
+
+    this.slug = this.makeSlug();
+    next();
+});
+
+schema.methods.makeSlug = function(){
+   return slugify(this.title, {
+        replacement: '-',  // replace spaces with replacement character, defaults to `-`
+        remove: /[*+~.()'"!:@]/g, // remove characters that match regex, defaults to `undefined`
+        lower: false,      // convert to lower case, defaults to `false`
+      })
+}
+
 
 module.exports = mongoose.model("Question",schema);
