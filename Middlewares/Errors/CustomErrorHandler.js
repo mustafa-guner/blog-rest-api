@@ -35,7 +35,7 @@ module.exports = {
             case "MongoError":
                 if(customError.message.includes("E1100")){
                     //E1100 => MongoDB error for duplicates values in db
-                    customError = new CustomError("User is already exists!",400);
+                    customError = new CustomError("You are trying to create something already exists!",400);
                 }
                 break;
 

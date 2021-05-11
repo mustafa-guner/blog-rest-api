@@ -19,7 +19,7 @@ module.exports = {
         //SAVE QUESTION
         await question.save();
 
-        req.status(200).json({
+        res.status(200).json({
             success:true,
             message:"Question is created succesfuly",
             data:question

@@ -11,7 +11,7 @@ const schema = mongoose.Schema({
     content:{
         type:String,
         required:[true,"Please provide a content"],
-        minlength:[20,"Please provide a"],
+        minlength:[10,"Please provide at least 10 char content."],
     },
     slug:String,
     createdAt:{
