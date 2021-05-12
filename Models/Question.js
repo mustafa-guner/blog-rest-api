@@ -33,6 +33,14 @@ const schema = mongoose.Schema({
             type:mongoose.Schema.ObjectId,
             ref:"User"
         } 
+    ],
+
+    //Bu Soryua birden fazla cevap gelebileceginden kaynakli bunu array yaptik obje deigil
+    answers:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"Answer"
+        }
     ]
 });
 

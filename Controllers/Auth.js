@@ -140,7 +140,7 @@ module.exports = {
             user.resetPasswordExpire = undefined;
 
             await user.save();
-            return next(new CustomError("Email couldnt sent", 500))
+            return next(new CustomError("Email couldnt sent", 500));
         }
 
     }),

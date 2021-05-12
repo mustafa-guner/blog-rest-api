@@ -4,6 +4,7 @@ const {isTokenIncluded,getAccessTokenFromHeader} = require("../../Helpers/Author
 const expressAsyncHandler = require("express-async-handler");
 const User = require("../../Models/User");
 const Question = require("../../Models/Question");
+const Answer = require("../../Models/Answer");
 
 module.exports = {
 
@@ -44,5 +45,14 @@ module.exports = {
         const userId = req.user.id;
         const question = await Question.findById(req.params.id);
         return question.user != userId ? next(new CustomError("You cant edit this question! Its not even yours!",403)):next();
+    }),
+
+    //This middleware detects the user if the owner of the question to update it. (Noone can update unless the owners)
+    getAnswerOwnerAccess: expressAsyncHandler( async(req,res,next)=>{
+        const userId = req.user.id;
+        const answerID = req.params._id;
+        const answer = await Answer.findById(answerID)
+        return answer.user != userId ? next(new CustomError("You cant edit this question! Its not even yours!",403)):next();
+       
     })
 }

@@ -5,7 +5,7 @@ const CustomError = require("../Helpers/Custom Error/CustomError");
 module.exports = {
 
     createQuestion: asyncHandler( async (req,res,next)=>{
-        
+       
         //We have to create a question from the req.body ({title,content e.g})
         const informations = req.body;
 
